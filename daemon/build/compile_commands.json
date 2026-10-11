@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/nathanielw/Projects/SystemMonitor/daemon/build",
+  "command": "/usr/bin/c++ -DPROTOBUF_USE_DLLS -I/home/nathanielw/Projects/SystemMonitor/daemon/include -I/home/nathanielw/Projects/SystemMonitor/daemon/build -std=gnu++17 -o CMakeFiles/metrics_daemon.dir/src/main.cpp.o -c /home/nathanielw/Projects/SystemMonitor/daemon/src/main.cpp",
+  "file": "/home/nathanielw/Projects/SystemMonitor/daemon/src/main.cpp",
+  "output": "CMakeFiles/metrics_daemon.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/nathanielw/Projects/SystemMonitor/daemon/build",
+  "command": "/usr/bin/c++ -DPROTOBUF_USE_DLLS -I/home/nathanielw/Projects/SystemMonitor/daemon/include -I/home/nathanielw/Projects/SystemMonitor/daemon/build -std=gnu++17 -o CMakeFiles/metrics_daemon.dir/metrics.pb.cc.o -c /home/nathanielw/Projects/SystemMonitor/daemon/build/metrics.pb.cc",
+  "file": "/home/nathanielw/Projects/SystemMonitor/daemon/build/metrics.pb.cc",
+  "output": "CMakeFiles/metrics_daemon.dir/metrics.pb.cc.o"
+},
+{
+  "directory": "/home/nathanielw/Projects/SystemMonitor/daemon/build",
+  "command": "/usr/bin/c++ -DPROTOBUF_USE_DLLS -I/home/nathanielw/Projects/SystemMonitor/daemon/include -I/home/nathanielw/Projects/SystemMonitor/daemon/build -std=gnu++17 -o CMakeFiles/metrics_daemon.dir/metrics.grpc.pb.cc.o -c /home/nathanielw/Projects/SystemMonitor/daemon/build/metrics.grpc.pb.cc",
+  "file": "/home/nathanielw/Projects/SystemMonitor/daemon/build/metrics.grpc.pb.cc",
+  "output": "CMakeFiles/metrics_daemon.dir/metrics.grpc.pb.cc.o"
+}
+]

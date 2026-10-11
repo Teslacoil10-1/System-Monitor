@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/nathanielw/Projects/SystemMonitor/daemon/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

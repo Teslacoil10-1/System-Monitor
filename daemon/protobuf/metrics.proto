@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package metric_daemon;
+
+message CpuMetrics {
+  double usage = 1;
+  uint64 coreCount = 2;
+  repeated double perCoreUsage = 3;
+}
+
+message NodeSnapshot {
+  string NodeId = 1;
+  int64 timestamp_ns = 2;
+  CpuMetrics cpu = 3;
+}
+
+message StreamRequest {
+  string node_id = 1;
+  uint64 sample_rate_ms = 2;
+}
+
+service MetricService {
+  rpc StreamMetrics(StreamRequest) returns (stream NodeSnapshot);
+}
