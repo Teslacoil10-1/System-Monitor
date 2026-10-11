@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./static/index.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <title>Dashboard</title>
+    </head>
+    <body>
+        <div class="dashboard-header">
+            <h1>Node Monitoring Dashboard</h1>
+            <div id="status" class="status-badge disconnected">
+                Disconnected
+            </div>
+        </div>
+        <div class="metrics-grid">
+            <div class="card">
+                <div class="card-title">Active Node</div>
+                <div id="node-id" class="card-value">--</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Current CPU Usage</div>
+                <div id="cpu-value" class="card-value">0.00%</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Network Latency</div>
+                <div id="latency-value" class="card-value">0.0 ms</div>
+            </div>
+        </div>
+        <div class="charts-container">
+            <div class="chart-box">
+                <canvas id="cpuChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="latencyChart"></canvas>
+            </div>
+        </div>
+
+        <script>
+            const MAX_DATA_POINTS = 20;
+
+            const statusBadge = document.getElementById("status");
+            const nodeIdEl = document.getElementById("node-id");
+            const cpuValueEl = document.getElementById("cpu-value");
+            const latencyValueEl = document.getElementById("latency-value");
+
+            const cpuCtx = document.getElementById("cpuChart").getContext("2d");
+            const cpuChart = new Chart(cpuCtx, {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "CPU Usage (%)",
+                            data: [],
+                            borderColor: "#24b47e",
+                            backgroundColor: "rgba(36, 180, 126, 0.1)",
+                            fill: true,
+                            tension: 0.3,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 100 } },
+                },
+            });
+
+            const latencyCtx = document
+                .getElementById("latencyChart")
+                .getContext("2d");
+            const latencyChart = new Chart(latencyCtx, {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "network latency (ms)",
+                            data: [],
+                            borderColor: "#1a73e8",
+                            backgroundColor: "rgba(26, 115, 232, 0.1)",
+                            fill: true,
+                            tension: 0.3,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } },
+                },
+            });
+
+            function updateChart(chart, label, value) {
+                chart.data.labels.push(label);
+                chart.data.datasets[0].data.push(value);
+                if (chart.data.labels.length > MAX_DATA_POINTS) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update("none");
+            }
+            const socket = new WebSocket("ws://localhost:8081/ws");
+
+            socket.onopen = () => {
+                statusBadge.textContent = "Connected Live";
+                statusBadge.className = "status-badge connected";
+            };
+
+            socket.onclose = () => {
+                statusBadge.textContent = "Disconnected";
+                statusBadge.className = "status-badge disconnected";
+            };
+            socket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    const timeLabel = new Date(
+                        data.timestamp,
+                    ).toLocaleTimeString();
+
+                    nodeIdEl.textContent = data.node_id;
+                    cpuValueEl.textContent = `${data.cpu_usage.toFixed(2)}%`;
+                    latencyValueEl.textContent = `${data.transport_latency_ms.toFixed(1)} ms`;
+
+                    updateChart(cpuChart, timeLabel, data.cpu_usage);
+                    updateChart(
+                        latencyChart,
+                        timeLabel,
+                        data.transport_latency_ms,
+                    );
+                } catch (err) {
+                    console.error("Error parsing metrics frame JSON: ", err);
+                }
+            };
+
+            socket.onerror = (error) => console.error("Socket Error: ", error);
+        </script>
+    </body>
+</html>

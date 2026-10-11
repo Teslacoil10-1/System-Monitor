@@ -24,7 +24,7 @@ add_custom_command(
          --cpp_out="${CMAKE_CURRENT_BINARY_DIR}"
          -I "${CMAKE_CURRENT_SOURCE_DIR}/protobuf"
          --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}"
-         "${PROTO_FILE}"
+         metrics.proto
     DEPENDS "${PROTO_FILE}"
 )
 

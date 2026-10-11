@@ -71,7 +71,7 @@ include CMakeFiles/metrics_daemon.dir/flags.make
 
 metrics.pb.cc: /home/nathanielw/Projects/SystemMonitor/daemon/protobuf/metrics.proto
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/nathanielw/Projects/SystemMonitor/daemon/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating metrics.pb.cc, metrics.pb.h, metrics.grpc.pb.cc, metrics.grpc.pb.h"
-	/usr/bin/protoc-36.1.0 --grpc_out="/home/nathanielw/Projects/SystemMonitor/daemon/build" --cpp_out="/home/nathanielw/Projects/SystemMonitor/daemon/build" -I /home/nathanielw/Projects/SystemMonitor/daemon/protobuf --plugin=protoc-gen-grpc="/usr/bin/grpc_cpp_plugin" /home/nathanielw/Projects/SystemMonitor/daemon/protobuf/metrics.proto
+	/usr/bin/protoc-36.1.0 --grpc_out="/home/nathanielw/Projects/SystemMonitor/daemon/build" --cpp_out="/home/nathanielw/Projects/SystemMonitor/daemon/build" -I /home/nathanielw/Projects/SystemMonitor/daemon/protobuf --plugin=protoc-gen-grpc="/usr/bin/grpc_cpp_plugin" metrics.proto
 
 metrics.pb.h: metrics.pb.cc
 	@$(CMAKE_COMMAND) -E touch_nocreate metrics.pb.h

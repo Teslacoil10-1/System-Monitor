@@ -1,4 +1,3 @@
-
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -9,7 +8,6 @@
 #include <numeric>
 #include <string>
 #include <thread>
-#include <utils/utils.hpp>
 #include <vector>
 
 #include "metrics.grpc.pb.h"
@@ -24,18 +22,6 @@ using grpc::Status;
 using metric_daemon::MetricService;
 using metric_daemon::NodeSnapshot;
 using metric_daemon::StreamRequest;
-
-/*
- * how usage is calculated
- * 1. get all aggreated cpu usage data in proc/stat
- * 2. map these values to vector all the posistion mean a certain thing like
- * index 4 is iowait
- * 3. calculate the following:
- * - idleTime times[3] + times[4] this corriponds to idle + iowait
- * - total time sums and accumulates every value in the vector
- * 4. now we can cleanly find the usage as a percent ((total - idle) / total) *
- * 100
- */
 
 class CpuTracker {
 private:
@@ -63,25 +49,25 @@ private:
   }
 
 public:
+  CpuTracker() {
+    std::vector<size_t> times = get_cpu_times();
+    if (times.size() >= 4) {
+      prev_idle = times[3];
+      if (times.size() >= 5) prev_idle += times[4];
+      prev_total = std::accumulate(times.begin(), times.end(), 0ULL);
+    }
+  }
+
   double get_usage_percent() {
     std::vector<size_t> times = get_cpu_times();
-    if (times.size() < 4)
-      return 0.0;
-    size_t idle = times[3];
+    if (times.size() < 4) return 0.0;
 
+    size_t idle = times[3];
     if (times.size() >= 5) {
-      idle += times[4]; // include iowait
+      idle += times[4];
     }
 
-    size_t total = std::accumulate(
-        times.begin(), times.end(),
-        0ULL); // 0ULL is an unsigned long long int
-               // with value 0 btw for future me
-               // also we do this becuase if it was regular int 0 it would
-               // cause int overflow and you would also mismatch types as size_t
-               // becuase size_t is an unsigned 64 bit int and int is signed so
-               // theres also that and this can cause truncation what is not
-               // very good
+    size_t total = std::accumulate(times.begin(), times.end(), 0ULL);
     size_t idle_delta = idle - prev_idle;
     size_t total_delta = total - prev_total;
 
@@ -92,9 +78,7 @@ public:
       return 0.0f;
     }
     double active_delta = static_cast<double>(total_delta - idle_delta);
-
-    double usage = utils::convert_to_percent(active_delta, total_delta);
-    return usage;
+    return utils::convert_to_percent(active_delta, total_delta);
   }
 };
 
@@ -102,7 +86,6 @@ class MetricServiceImpl final : public MetricService::Service {
   Status StreamMetrics(ServerContext *context, const StreamRequest *request,
                        ServerWriter<NodeSnapshot> *writer) override {
     CpuTracker cpu;
-    cpu.get_usage_percent();
 
     uint64_t sleep_ms =
         request->sample_rate_ms() > 0 ? request->sample_rate_ms() : 1000;
