@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package metric_daemon;
+option go_package = "broker/internal/pb";
 
 message CpuMetrics {
   double usage = 1;
