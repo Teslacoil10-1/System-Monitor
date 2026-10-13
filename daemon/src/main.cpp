@@ -123,7 +123,7 @@ int main() {
   builder.RegisterService(&service);
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Daemon listening on " << server_address << std::endl;
+  std::cout << "daemon listening on " << server_address << std::endl;
 
   server->Wait();
   return 0;
