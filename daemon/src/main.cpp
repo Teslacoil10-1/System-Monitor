@@ -109,7 +109,7 @@ class MetricServiceImpl final : public MetricService::Service {
       writer->Write(snapshot);
     }
 
-    std::cout << "Broker disconnected.\n";
+    std::cout << "broker disconnected\n";
     return Status::OK;
   }
 };
